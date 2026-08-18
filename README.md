@@ -16,6 +16,10 @@ ax-link version
 
 GitHub 로그인이나 `HOMEBREW_GITHUB_API_TOKEN`은 필요하지 않습니다.
 
+Homebrew 6 이상에서 위 완전한 설치 이름은 `F-F-WP/public` Tap 전체가 아니라 `ax-link` Formula 하나만 신뢰하도록
+등록합니다. 별도의 `brew trust` 명령은 필요하지 않습니다. 자세한 정책은
+[Homebrew Tap Trust](https://docs.brew.sh/Tap-Trust)를 참고하세요.
+
 업데이트:
 
 ```bash
@@ -50,4 +54,3 @@ brew test F-F-WP/public/ax-link
 ## 지원 범위
 
 이 저장소는 공개 배포 진입점입니다. 제품 기능과 계정·권한 문의는 각 제품의 공식 지원 채널을 이용해 주세요.
-
