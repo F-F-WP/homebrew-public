@@ -39,6 +39,9 @@ ax-link setup opencode
 ax-link setup omp
 ```
 
+등록된 키가 여러 개라면 `↑` / `↓`로 이동해 `Enter`로 선택합니다. `j` / `k` 이동도 지원하며, `q` 또는
+`Ctrl+C`로 기존 선택을 유지한 채 취소할 수 있습니다.
+
 `ax-link setup`은 provider 연결 설정까지만 담당합니다. Paseo, OpenCode, OMP 및 이를 사용하는 다른 제품의
 설치·실행·권한 관리·데이터 처리는 각 제품과 사용자의 책임입니다.
 
