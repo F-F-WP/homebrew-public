@@ -39,6 +39,10 @@ ax-link setup opencode
 ax-link setup omp
 ```
 
+macOS에서 DMG로 Paseo Desktop을 설치했다면 AX Link CLI `1.2.2` 이상이 `/Applications/Paseo.app` 또는
+`~/Applications/Paseo.app`의 공식 번들 CLI를 자동으로 찾습니다. AX Link 연결을 위해 Paseo를 Homebrew나 npm으로
+다시 설치할 필요는 없습니다.
+
 등록된 키가 여러 개라면 `↑` / `↓`로 이동해 `Enter`로 선택합니다. `j` / `k` 이동도 지원하며, `q` 또는
 `Ctrl+C`로 기존 선택을 유지한 채 취소할 수 있습니다.
 
