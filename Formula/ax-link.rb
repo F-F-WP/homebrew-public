@@ -1,25 +1,25 @@
 class AxLink < Formula
   desc "Connect AX Link models to supported AI provider runtimes"
   homepage "https://github.com/F-F-WP/homebrew-public"
-  version "1.2.2"
+  version "1.2.3"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.2/ax-link_1.2.2_darwin_arm64.tar.gz"
-      sha256 "add0a7debb558669f68ff35cce9cb02c1317b0a5b95875401659044f66299790"
+      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.3/ax-link_1.2.3_darwin_arm64.tar.gz"
+      sha256 "7dd63cc4c89d43fcf03c1c926cdaa9e498a4a3c51c883cfe0df220ce717bb61a"
     else
-      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.2/ax-link_1.2.2_darwin_amd64.tar.gz"
-      sha256 "2006463a8aac9fdb7b366e31ade6320624a8afdce311743275ee47c1571c1feb"
+      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.3/ax-link_1.2.3_darwin_amd64.tar.gz"
+      sha256 "e0976376b7fd99f128b3886e468c02d311244ff9d60d80014da437eec6e27f66"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.2/ax-link_1.2.2_linux_arm64.tar.gz"
-      sha256 "099687b8cfa53b0bda04e7860fa8269aa6bfd691ea27a849d7d977f0811890b5"
+      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.3/ax-link_1.2.3_linux_arm64.tar.gz"
+      sha256 "8aa8953c624e45c0b954c4127311fa60b41d7e75362388d44b8fde2375eb5dfb"
     else
-      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.2/ax-link_1.2.2_linux_amd64.tar.gz"
-      sha256 "45a4d26d157584cdedeba4a2d83c91b2fc66ef9e35b48040cde9f64b86254dc3"
+      url "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v1.2.3/ax-link_1.2.3_linux_amd64.tar.gz"
+      sha256 "f40bc2593adc811614baa3319aaca7586465189bbf12b04576477f16e7315f49"
     end
   end
 
