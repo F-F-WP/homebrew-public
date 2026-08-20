@@ -39,6 +39,18 @@ ax-link setup opencode
 ax-link setup omp
 ```
 
+연결된 키가 허용하는 모델과 로컬 반영 상태는 대상별로 확인할 수 있습니다. 새 모델이 아직 반영되지 않았거나
+기존 모델이 남아 있으면 CLI가 실행할 `sync` 명령을 함께 안내합니다.
+
+```bash
+ax-link models paseo
+ax-link models opencode
+ax-link models omp
+```
+
+`sync`에서 HTTP 401이 발생하면 오류에 표시된 `ax-link setup <target>`으로 현재 선택된 키를 다시 연결한 뒤
+`ax-link doctor <target>`으로 상태를 확인합니다.
+
 macOS에서 DMG로 Paseo Desktop을 설치했다면 AX Link CLI `1.2.2` 이상이 `/Applications/Paseo.app` 또는
 `~/Applications/Paseo.app`의 공식 번들 CLI를 자동으로 찾습니다. AX Link 연결을 위해 Paseo를 Homebrew나 npm으로
 다시 설치할 필요는 없습니다.
