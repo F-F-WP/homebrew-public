@@ -35,6 +35,7 @@ ax-link key select
 
 # 사용하는 대상 하나를 선택합니다.
 ax-link setup paseo
+ax-link setup orca
 ax-link setup opencode
 ax-link setup omp
 ```
@@ -44,6 +45,7 @@ ax-link setup omp
 
 ```bash
 ax-link models paseo
+ax-link models orca
 ax-link models opencode
 ax-link models omp
 ```
@@ -55,10 +57,17 @@ macOS에서 DMG로 Paseo Desktop을 설치했다면 AX Link CLI `1.2.2` 이상�
 `~/Applications/Paseo.app`의 공식 번들 CLI를 자동으로 찾습니다. AX Link 연결을 위해 Paseo를 Homebrew나 npm으로
 다시 설치할 필요는 없습니다.
 
+AX Link CLI `1.3.0`부터 Orca에서 **OpenCode agent**로 연결할 수 있습니다. Orca와 OpenCode CLI를 설치한 뒤
+`ax-link setup orca`를 실행하고, Orca의 새 OpenCode agent에서 `/models` → AX Link 모델을 선택합니다.
+`sync orca`, `models orca`, `doctor orca`로 연결을 관리할 수 있습니다.
+
+Orca와 같은 호스트·사용자 환경에서 실행하세요. 원격 호스트·WSL은 해당 환경 안에서 setup해야 합니다.
+OpenCode 설정과 인증정보를 공유하므로 `uninstall orca`는 같은 정보를 쓰는 OpenCode·Paseo 연결도 해제합니다.
+
 등록된 키가 여러 개라면 `↑` / `↓`로 이동해 `Enter`로 선택합니다. `j` / `k` 이동도 지원하며, `q` 또는
 `Ctrl+C`로 기존 선택을 유지한 채 취소할 수 있습니다.
 
-`ax-link setup`은 provider 연결 설정까지만 담당합니다. Paseo, OpenCode, OMP 및 이를 사용하는 다른 제품의
+`ax-link setup`은 provider 연결 설정까지만 담당합니다. Paseo, Orca, OpenCode, OMP 및 이를 사용하는 다른 제품의
 설치·실행·권한 관리·데이터 처리는 각 제품과 사용자의 책임입니다.
 
 ## 무결성 확인
