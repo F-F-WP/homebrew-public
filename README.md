@@ -34,32 +34,41 @@ Windows에는 Homebrew가 없으므로 PowerShell에서 Release의 zip을 받아
 추가합니다. `$version`만 바꾸면 같은 명령으로 업데이트도 됩니다. Windows arm64 바이너리는 `1.4.0`부터 제공됩니다.
 
 ```powershell
-$version = "1.4.0"
-$ProgressPreference = "SilentlyContinue"
-[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-$arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
-$base = "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v$version"
-$work = Join-Path $env:TEMP "ax-link-$version"
-New-Item -ItemType Directory -Force -Path $work | Out-Null
-Invoke-WebRequest -UseBasicParsing "$base/checksums.txt" -OutFile "$work\checksums.txt"
-$checksums = Get-Content "$work\checksums.txt"
-# arm64 archive가 없는 이전 버전은 Windows의 x64 에뮬레이션으로 amd64를 사용합니다.
-$name = "ax-link_${version}_windows_$arch.zip", "ax-link_${version}_windows_amd64.zip" |
-  Where-Object { $n = $_; $checksums | Where-Object { ($_ -split "\s+")[-1] -eq $n } } | Select-Object -First 1
-if (-not $name) { throw "checksums.txt에서 Windows archive를 찾을 수 없습니다" }
-$expected = (($checksums | Where-Object { ($_ -split "\s+")[-1] -eq $name }) -split "\s+")[0]
-Invoke-WebRequest -UseBasicParsing "$base/$name" -OutFile "$work\$name"
-$actual = (Get-FileHash -Algorithm SHA256 "$work\$name").Hash
-if ($actual -ne $expected) { throw "SHA-256 검증 실패: $name" }
-$installDir = Join-Path $env:LOCALAPPDATA "Programs\ax-link"
-Expand-Archive -Force -Path "$work\$name" -DestinationPath $installDir
-Unblock-File "$installDir\ax-link.exe"
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if (($userPath -split ";") -notcontains $installDir) {
-  [Environment]::SetEnvironmentVariable("Path", ((@($userPath, $installDir) | Where-Object { $_ }) -join ";"), "User")
+& {
+  $ErrorActionPreference = "Stop"
+  $version = "1.4.0"
+  $ProgressPreference = "SilentlyContinue"
+  [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+  $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
+  $base = "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v$version"
+  $work = Join-Path $env:TEMP "ax-link-$version"
+  New-Item -ItemType Directory -Force -Path $work | Out-Null
+  Invoke-WebRequest -UseBasicParsing "$base/checksums.txt" -OutFile "$work\checksums.txt"
+  $checksums = Get-Content "$work\checksums.txt"
+  # arm64 archive가 없는 이전 버전은 Windows의 x64 에뮬레이션으로 amd64를 사용합니다.
+  $name = "ax-link_${version}_windows_$arch.zip", "ax-link_${version}_windows_amd64.zip" |
+    Where-Object { $n = $_; $checksums | Where-Object { ($_ -split "\s+")[-1] -eq $n } } | Select-Object -First 1
+  if (-not $name) { throw "checksums.txt에서 Windows archive를 찾을 수 없습니다" }
+  $expected = (($checksums | Where-Object { ($_ -split "\s+")[-1] -eq $name }) -split "\s+")[0]
+  Invoke-WebRequest -UseBasicParsing "$base/$name" -OutFile "$work\$name"
+  $actual = (Get-FileHash -Algorithm SHA256 "$work\$name").Hash
+  if ($actual -ne $expected) { throw "SHA-256 검증 실패: $name" }
+  $installDir = Join-Path $env:LOCALAPPDATA "Programs\ax-link"
+  Expand-Archive -Force -Path "$work\$name" -DestinationPath $installDir
+  Unblock-File "$installDir\ax-link.exe"
+  # %USERPROFILE% 같은 변수가 든 기존 Path 항목을 풀어 쓰지 않도록 레지스트리 원문을 읽고 그대로 씁니다.
+  $envKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("Environment", $true)
+  $userPath = $envKey.GetValue("Path", "", [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+  if (($userPath -split ";") -notcontains $installDir) {
+    $envKey.SetValue("Path", ((@($userPath, $installDir) | Where-Object { $_ }) -join ";"), [Microsoft.Win32.RegistryValueKind]::ExpandString)
+    # 새로 여는 터미널·앱이 바뀐 Path를 받도록 환경 변수 변경 알림을 보냅니다.
+    [Environment]::SetEnvironmentVariable("AX_LINK_PATH_REFRESH", "1", "User")
+    [Environment]::SetEnvironmentVariable("AX_LINK_PATH_REFRESH", $null, "User")
+  }
+  $envKey.Close()
+  $env:Path = "$installDir;$env:Path"
+  ax-link version
 }
-$env:Path = "$installDir;$env:Path"
-ax-link version
 ```
 
 - 설치 전에 이미 열려 있던 터미널·Orca·Paseo는 새 `Path`를 모르므로 다시 열어야 합니다.
