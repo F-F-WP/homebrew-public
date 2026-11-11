@@ -36,7 +36,7 @@ Windows에는 Homebrew가 없으므로 PowerShell에서 Release의 zip을 받아
 ```powershell
 & {
   $ErrorActionPreference = "Stop"
-  $version = "1.4.0"
+  $version = "1.5.0"
   $ProgressPreference = "SilentlyContinue"
   [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
   $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
@@ -114,6 +114,10 @@ AX Link CLI `1.3.0`부터 Orca에서 **OpenCode agent**로 연결할 수 있습�
 
 Orca와 같은 호스트·사용자 환경에서 실행하세요. 원격 호스트·WSL은 해당 환경 안에서 setup해야 합니다.
 OpenCode 설정과 인증정보를 공유하므로 `uninstall orca`는 같은 정보를 쓰는 OpenCode·Paseo 연결도 해제합니다.
+
+AX Link CLI `1.5.0`부터 OpenCode 2.x와 OMP 18.x를 지원합니다. 지금 OpenCode·OMP 공식 설치 명령은 이 버전을
+설치하므로, 새로 설치했다면 AX Link CLI를 `1.5.0` 이상으로 업데이트하세요. OpenCode 2는 API Key를 자체 저장소에
+보관하므로 `opencode` CLI가 필요하고, `ax-link setup`이 그 저장소에도 키를 넣습니다.
 
 등록된 키가 여러 개라면 `↑` / `↓`로 이동해 `Enter`로 선택합니다. `j` / `k` 이동도 지원하며, `q` 또는
 `Ctrl+C`로 기존 선택을 유지한 채 취소할 수 있습니다.
