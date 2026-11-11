@@ -27,6 +27,48 @@ brew update
 brew upgrade F-F-WP/public/ax-link
 ```
 
+## Windows
+
+Windows에는 Homebrew가 없으므로 PowerShell에서 Release의 zip을 받아 사용자 영역에 설치합니다. 관리자 권한은
+필요하지 않습니다. 체크섬을 검증한 뒤 `%LOCALAPPDATA%\Programs\ax-link`에 설치하고 사용자 `Path`에 한 번만
+추가합니다. `$version`만 바꾸면 같은 명령으로 업데이트도 됩니다. Windows arm64 바이너리는 `1.4.0`부터 제공됩니다.
+
+```powershell
+$version = "1.4.0"
+$ProgressPreference = "SilentlyContinue"
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+$arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
+$base = "https://github.com/F-F-WP/homebrew-public/releases/download/ax-link-v$version"
+$work = Join-Path $env:TEMP "ax-link-$version"
+New-Item -ItemType Directory -Force -Path $work | Out-Null
+Invoke-WebRequest -UseBasicParsing "$base/checksums.txt" -OutFile "$work\checksums.txt"
+$checksums = Get-Content "$work\checksums.txt"
+# arm64 archive가 없는 이전 버전은 Windows의 x64 에뮬레이션으로 amd64를 사용합니다.
+$name = "ax-link_${version}_windows_$arch.zip", "ax-link_${version}_windows_amd64.zip" |
+  Where-Object { $n = $_; $checksums | Where-Object { ($_ -split "\s+")[-1] -eq $n } } | Select-Object -First 1
+if (-not $name) { throw "checksums.txt에서 Windows archive를 찾을 수 없습니다" }
+$expected = (($checksums | Where-Object { ($_ -split "\s+")[-1] -eq $name }) -split "\s+")[0]
+Invoke-WebRequest -UseBasicParsing "$base/$name" -OutFile "$work\$name"
+$actual = (Get-FileHash -Algorithm SHA256 "$work\$name").Hash
+if ($actual -ne $expected) { throw "SHA-256 검증 실패: $name" }
+$installDir = Join-Path $env:LOCALAPPDATA "Programs\ax-link"
+Expand-Archive -Force -Path "$work\$name" -DestinationPath $installDir
+Unblock-File "$installDir\ax-link.exe"
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if (($userPath -split ";") -notcontains $installDir) {
+  [Environment]::SetEnvironmentVariable("Path", ((@($userPath, $installDir) | Where-Object { $_ }) -join ";"), "User")
+}
+$env:Path = "$installDir;$env:Path"
+ax-link version
+```
+
+- 설치 전에 이미 열려 있던 터미널·Orca·Paseo는 새 `Path`를 모르므로 다시 열어야 합니다.
+- 업데이트 중 `ax-link.exe`를 덮어쓸 수 없으면 실행 중인 `ax-link`(Paseo의 OMP 연결 포함)를 종료한 뒤 다시 실행합니다.
+- AX Link CLI `1.4.0`부터 Windows의 Orca 앱(`%LOCALAPPDATA%\Programs\Orca`)과 Paseo 앱
+  (`%USERPROFILE%\.local\bin\paseo.cmd`, `%LOCALAPPDATA%\Programs\Paseo`)에 포함된 CLI를 PATH에 없어도 자동으로 찾습니다.
+  Paseo가 agent로 실행하는 `opencode`·`omp`는 `Path`에 있어야 합니다.
+- WSL 안의 agent는 WSL 안에서 Linux 바이너리를 설치하고 따로 setup합니다.
+
 AX Link에 로그인한 뒤 사용할 환경을 연결합니다.
 
 ```bash
